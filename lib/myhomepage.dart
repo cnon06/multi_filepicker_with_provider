@@ -4,7 +4,6 @@ import 'package:file_picker/file_picker.dart';
 
 import 'package:flutter/material.dart';
 
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
@@ -15,23 +14,23 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String fileString = "";
   String fileExtension = "";
+  List<File>? files = null;
+  
 
   void singleFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: true);
 
     if (result != null) {
-      File file = File(result.files.single.path!);
-
-      setState(() {
-        fileString = result.files.single.path!.toString();
-        fileExtension = result.files.single.extension!.toString();
-      });
-
-      
+     
+      files = result.paths.map((path) => File(path!)).toList();
+     
     } else {
-      fileString = "User canceled the picker.";
-      // User canceled the picker
+     
     }
+
+    setState(() {});
+
   }
 
   @override
@@ -44,19 +43,42 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("File: $fileString, File Extension: $fileExtension"),
-            // Image.network(fileString),
-            (fileString == "") 
-                ? const Text("Select Image")
-                : fileExtension == "jpg" || fileExtension == "png" ? Flexible(
-                    child: Image.file(
-                      File(fileString),
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                    ),
-                  ) 
-                  : 
-                  const Text("You must select an image of which extension is jpg or png."),
+            SizedBox(
+              height: 500,
+              child: files != null
+                  ? ListView.builder(
+                      itemCount: files?.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+
+                              children: [
+                                 files![index].path.endsWith("jpg") ||
+                                files![index].path.endsWith("png")
+                            ?
+                           
+                            SizedBox(
+                                height: 100,
+                                width: 100,
+                                child: Image.file(
+                                  File(files![index].path),
+                                  fit: BoxFit.contain,
+                                  width: double.infinity,
+                                ),
+                              )
+                            : const Text(
+                                "You must select an image of which extension is jpg or png."),
+
+                              const SizedBox(height: 10),
+
+                              ],
+
+                        );
+
+                       
+                      })
+                  : const Text("There is no any image"),
+            ),
+
             TextButton(
                 onPressed: () {
                   singleFile();
