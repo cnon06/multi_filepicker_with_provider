@@ -19,7 +19,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void singleFile() async {
     FilePickerResult? result =
-        await FilePicker.platform.pickFiles(allowMultiple: true);
+        await FilePicker.platform.pickFiles(
+          allowMultiple: true,
+          type: FileType.custom,
+  allowedExtensions: ['jpg', 'png', 'jpeg'],
+  );
 
     if (result != null) {
      
@@ -52,10 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         return Column(
 
                               children: [
-                                 files![index].path.endsWith("jpg") ||
-                                files![index].path.endsWith("png")
-                            ?
-                           
+                          
                             SizedBox(
                                 height: 100,
                                 width: 100,
@@ -64,9 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   fit: BoxFit.contain,
                                   width: double.infinity,
                                 ),
-                              )
-                            : const Text(
-                                "You must select an image of which extension is jpg or png."),
+                              ),
+                           
 
                               const SizedBox(height: 10),
 
