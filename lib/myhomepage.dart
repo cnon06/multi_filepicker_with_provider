@@ -3,42 +3,37 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/modeloffilepicker.dart';
+import 'package:provider/provider.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
+// ignore: must_be_immutable
+class MyHomePage extends StatelessWidget {
   String fileString = "";
   String fileExtension = "";
-  List<File>? files = null;
-  
+ late List<File>? files;
 
-  void singleFile() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(
-          allowMultiple: true,
-          type: FileType.custom,
-  allowedExtensions: ['jpg', 'png', 'jpeg'],
-  );
+  MyHomePage({Key? key}) : super(key: key);
+
+  void singleFile(ModelOfFilePicker modelOfFilePicker) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'jpeg'],
+    );
 
     if (result != null) {
-     
       files = result.paths.map((path) => File(path!)).toList();
-     
-    } else {
-     
-    }
+      modelOfFilePicker.filePickerModelFunction(files);
+    } else {}
 
-    setState(() {});
-
+    // setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    final modelOfFilePicker =
+        Provider.of<ModelOfFilePicker>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("My Home Page"),
@@ -49,39 +44,36 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             SizedBox(
               height: 500,
-              child: files != null
+              child: 
+              
+               Consumer<ModelOfFilePicker>(
+              builder: (_, value, __) =>  modelOfFilePicker.files != null
                   ? ListView.builder(
-                      itemCount: files?.length,
+                      itemCount: modelOfFilePicker.files?.length,
                       itemBuilder: (context, index) {
                         return Column(
-
-                              children: [
-                          
+                          children: [
                             SizedBox(
-                                height: 100,
-                                width: 100,
-                                child: Image.file(
-                                  File(files![index].path),
-                                  fit: BoxFit.contain,
-                                  width: double.infinity,
-                                ),
+                              height: 100,
+                              width: 100,
+                              child: Image.file(
+                                File(modelOfFilePicker.files![index].path),
+                                fit: BoxFit.contain,
+                                width: double.infinity,
                               ),
-                           
-
-                              const SizedBox(height: 10),
-
-                              ],
-
+                            ),
+                            const SizedBox(height: 10),
+                          ],
                         );
-
-                       
                       })
                   : const Text("There is no any image"),
-            ),
-
+              ),
+              ),
+              
+            
             TextButton(
                 onPressed: () {
-                  singleFile();
+                  singleFile(modelOfFilePicker);
                 },
                 child: const Text("File")),
           ],

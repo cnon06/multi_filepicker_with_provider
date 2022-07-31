@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'modeloffilepicker.dart';
 import 'myhomepage.dart';
 
 
@@ -19,7 +21,8 @@ class MyApp extends StatelessWidget {
   
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      home: ChangeNotifierProvider<ModelOfFilePicker>(
+          create: (context) => ModelOfFilePicker(), child:  MyHomePage()),//MyHomePage(),
     );
   }
 }
